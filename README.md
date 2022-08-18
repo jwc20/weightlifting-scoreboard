@@ -2,7 +2,7 @@
 
 
 
-## Referece/Inspo
+## Reference/Inspo
 - [Easy Sport](http://easy-sport.it/sistemi-gestione-eventi-sportivi/)
 - [Swiss Timing](https://www.swisstiming.com/fileadmin/Resources/Data/Datasheets/DOCM_WL_Scoring-1215_EN.pdf)
 - [olyftia](https://olyftia.com/)

@@ -1,4 +1,7 @@
-# weightlifting-scoreboard
+# Weightlifting Scoreboard
+
+An app for keeping weightlifting scores.
+[Figma Wireframe](https://www.figma.com/file/i2E4v69yYlq6BQxmIiDuL7/wl?node-id=0%3A1)
 
 ## Reference/Inspo
 

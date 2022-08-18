@@ -5,7 +5,8 @@ An app for keeping weightlifting scores.\
 
 ## Reference/Inspo
 
-[Images](https://imgur.com/a/qyYEbER)
+[Images](https://imgur.com/a/qyYEbER)\
+[IWF Competition Handbook](https://iwf.sport/wp-content/uploads/downloads/2020/01/IWF_TCRR_2020.pdf)
 
 - [Easy Sport](http://easy-sport.it/sistemi-gestione-eventi-sportivi/)
 - [Swiss Timing](https://www.swisstiming.com/fileadmin/Resources/Data/Datasheets/DOCM_WL_Scoring-1215_EN.pdf)

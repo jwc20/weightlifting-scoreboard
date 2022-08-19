@@ -1,557 +1,891 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!-- saved from url=(0070)https://www.iwf.net/scoreboard/scoreboard2.php?timestamp=1630538756201 -->
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script>(function(){function hookGeo() {
-  //<![CDATA[
-  const WAIT_TIME = 100;
-  const hookedObj = {
-    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
-    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
-    fakeGeo: true,
-    genLat: 38.883333,
-    genLon: -77.000
-  };
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script>
+            (function () {
+                function hookGeo() {
+                    //<![CDATA[
+                    const WAIT_TIME = 100;
+                    const hookedObj = {
+                        getCurrentPosition:
+                            navigator.geolocation.getCurrentPosition.bind(
+                                navigator.geolocation
+                            ),
+                        watchPosition: navigator.geolocation.watchPosition.bind(
+                            navigator.geolocation
+                        ),
+                        fakeGeo: true,
+                        genLat: 38.883333,
+                        genLon: -77.0,
+                    };
 
-  function waitGetCurrentPosition() {
-    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
-      if (hookedObj.fakeGeo === true) {
-        hookedObj.tmp_successCallback({
-          coords: {
-            latitude: hookedObj.genLat,
-            longitude: hookedObj.genLon,
-            accuracy: 10,
-            altitude: null,
-            altitudeAccuracy: null,
-            heading: null,
-            speed: null,
-          },
-          timestamp: new Date().getTime(),
-        });
-      } else {
-        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
-      }
-    } else {
-      setTimeout(waitGetCurrentPosition, WAIT_TIME);
-    }
-  }
+                    function waitGetCurrentPosition() {
+                        if (typeof hookedObj.fakeGeo !== "undefined") {
+                            if (hookedObj.fakeGeo === true) {
+                                hookedObj.tmp_successCallback({
+                                    coords: {
+                                        latitude: hookedObj.genLat,
+                                        longitude: hookedObj.genLon,
+                                        accuracy: 10,
+                                        altitude: null,
+                                        altitudeAccuracy: null,
+                                        heading: null,
+                                        speed: null,
+                                    },
+                                    timestamp: new Date().getTime(),
+                                });
+                            } else {
+                                hookedObj.getCurrentPosition(
+                                    hookedObj.tmp_successCallback,
+                                    hookedObj.tmp_errorCallback,
+                                    hookedObj.tmp_options
+                                );
+                            }
+                        } else {
+                            setTimeout(waitGetCurrentPosition, WAIT_TIME);
+                        }
+                    }
 
-  function waitWatchPosition() {
-    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
-      if (hookedObj.fakeGeo === true) {
-        navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
-        return Math.floor(Math.random() * 10000); // random id
-      } else {
-        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
-      }
-    } else {
-      setTimeout(waitWatchPosition, WAIT_TIME);
-    }
-  }
+                    function waitWatchPosition() {
+                        if (typeof hookedObj.fakeGeo !== "undefined") {
+                            if (hookedObj.fakeGeo === true) {
+                                navigator.getCurrentPosition(
+                                    hookedObj.tmp2_successCallback,
+                                    hookedObj.tmp2_errorCallback,
+                                    hookedObj.tmp2_options
+                                );
+                                return Math.floor(Math.random() * 10000); // random id
+                            } else {
+                                hookedObj.watchPosition(
+                                    hookedObj.tmp2_successCallback,
+                                    hookedObj.tmp2_errorCallback,
+                                    hookedObj.tmp2_options
+                                );
+                            }
+                        } else {
+                            setTimeout(waitWatchPosition, WAIT_TIME);
+                        }
+                    }
 
-  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
-    hookedObj.tmp_successCallback = successCallback;
-    hookedObj.tmp_errorCallback = errorCallback;
-    hookedObj.tmp_options = options;
-    waitGetCurrentPosition();
-  };
-  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
-    hookedObj.tmp2_successCallback = successCallback;
-    hookedObj.tmp2_errorCallback = errorCallback;
-    hookedObj.tmp2_options = options;
-    waitWatchPosition();
-  };
+                    Object.getPrototypeOf(
+                        navigator.geolocation
+                    ).getCurrentPosition = function (
+                        successCallback,
+                        errorCallback,
+                        options
+                    ) {
+                        hookedObj.tmp_successCallback = successCallback;
+                        hookedObj.tmp_errorCallback = errorCallback;
+                        hookedObj.tmp_options = options;
+                        waitGetCurrentPosition();
+                    };
+                    Object.getPrototypeOf(navigator.geolocation).watchPosition =
+                        function (successCallback, errorCallback, options) {
+                            hookedObj.tmp2_successCallback = successCallback;
+                            hookedObj.tmp2_errorCallback = errorCallback;
+                            hookedObj.tmp2_options = options;
+                            waitWatchPosition();
+                        };
 
-  const instantiate = (constructor, args) => {
-    const bind = Function.bind;
-    const unbind = bind.bind(bind);
-    return new (unbind(constructor, null).apply(null, args));
-  }
+                    const instantiate = (constructor, args) => {
+                        const bind = Function.bind;
+                        const unbind = bind.bind(bind);
+                        return new (unbind(constructor, null).apply(
+                            null,
+                            args
+                        ))();
+                    };
 
-  Blob = function (_Blob) {
-    function secureBlob(...args) {
-      const injectableMimeTypes = [
-        { mime: 'text/html', useXMLparser: false },
-        { mime: 'application/xhtml+xml', useXMLparser: true },
-        { mime: 'text/xml', useXMLparser: true },
-        { mime: 'application/xml', useXMLparser: true },
-        { mime: 'image/svg+xml', useXMLparser: true },
-      ];
-      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+                    Blob = (function (_Blob) {
+                        function secureBlob(...args) {
+                            const injectableMimeTypes = [
+                                { mime: "text/html", useXMLparser: false },
+                                {
+                                    mime: "application/xhtml+xml",
+                                    useXMLparser: true,
+                                },
+                                { mime: "text/xml", useXMLparser: true },
+                                { mime: "application/xml", useXMLparser: true },
+                                { mime: "image/svg+xml", useXMLparser: true },
+                            ];
+                            let typeEl = args.find(
+                                (arg) =>
+                                    typeof arg === "object" &&
+                                    typeof arg.type === "string" &&
+                                    arg.type
+                            );
 
-      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
-        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
-        if (mimeTypeIndex >= 0) {
-          let mimeType = injectableMimeTypes[mimeTypeIndex];
-          let injectedCode = `<script>(
+                            if (
+                                typeof typeEl !== "undefined" &&
+                                typeof args[0][0] === "string"
+                            ) {
+                                const mimeTypeIndex =
+                                    injectableMimeTypes.findIndex(
+                                        (mimeType) =>
+                                            mimeType.mime.toLowerCase() ===
+                                            typeEl.type.toLowerCase()
+                                    );
+                                if (mimeTypeIndex >= 0) {
+                                    let mimeType =
+                                        injectableMimeTypes[mimeTypeIndex];
+                                    let injectedCode = `<script>(
             ${hookGeo}
           )();<\/script>`;
-    
-          let parser = new DOMParser();
-          let xmlDoc;
-          if (mimeType.useXMLparser === true) {
-            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
-          } else {
-            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
-          }
 
-          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
-            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
-    
-            if (mimeType.useXMLparser === true) {
-              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
-            } else {
-              args[0][0] = xmlDoc.documentElement.outerHTML;
+                                    let parser = new DOMParser();
+                                    let xmlDoc;
+                                    if (mimeType.useXMLparser === true) {
+                                        xmlDoc = parser.parseFromString(
+                                            args[0].join(""),
+                                            mimeType.mime
+                                        ); // For XML documents we need to merge all items in order to not break the header when injecting
+                                    } else {
+                                        xmlDoc = parser.parseFromString(
+                                            args[0][0],
+                                            mimeType.mime
+                                        );
+                                    }
+
+                                    if (
+                                        xmlDoc.getElementsByTagName(
+                                            "parsererror"
+                                        ).length === 0
+                                    ) {
+                                        // if no errors were found while parsing...
+                                        xmlDoc.documentElement.insertAdjacentHTML(
+                                            "afterbegin",
+                                            injectedCode
+                                        );
+
+                                        if (mimeType.useXMLparser === true) {
+                                            args[0] = [
+                                                new XMLSerializer().serializeToString(
+                                                    xmlDoc
+                                                ),
+                                            ];
+                                        } else {
+                                            args[0][0] =
+                                                xmlDoc.documentElement.outerHTML;
+                                        }
+                                    }
+                                }
+                            }
+
+                            return instantiate(_Blob, args); // arguments?
+                        }
+
+                        // Copy props and methods
+                        let propNames = Object.getOwnPropertyNames(_Blob);
+                        for (let i = 0; i < propNames.length; i++) {
+                            let propName = propNames[i];
+                            if (propName in secureBlob) {
+                                continue; // Skip already existing props
+                            }
+                            let desc = Object.getOwnPropertyDescriptor(
+                                _Blob,
+                                propName
+                            );
+                            Object.defineProperty(secureBlob, propName, desc);
+                        }
+
+                        secureBlob.prototype = _Blob.prototype;
+                        return secureBlob;
+                    })(Blob);
+
+                    window.addEventListener(
+                        "message",
+                        function (event) {
+                            if (event.source !== window) {
+                                return;
+                            }
+                            const message = event.data;
+                            switch (message.method) {
+                                case "updateLocation":
+                                    if (
+                                        typeof message.info === "object" &&
+                                        typeof message.info.coords === "object"
+                                    ) {
+                                        hookedObj.genLat =
+                                            message.info.coords.lat;
+                                        hookedObj.genLon =
+                                            message.info.coords.lon;
+                                        hookedObj.fakeGeo = message.info.fakeIt;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        },
+                        false
+                    );
+                    //]]>
+                }
+                hookGeo();
+            })();
+        </script>
+        <!--<meta http-equiv="refresh" content="5">-->
+        <meta http-equiv="Expires" content="Tue, 01 Jan 2000 12:12:12 GMT" />
+        <meta http-equiv="Pragma" content="no-cache" />
+
+        <title>ScoreBoard</title>
+        <style type="text/css">
+            <!-- <!-- 
+                
+            body {
+                background-color: #000000;
             }
-          }
-        }
-      }
+            body,
+            td,
+            th {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 12px;
+                color: #ffff00;
+            }
+            .keret {
+                border: 1px solid #ffffff;
+                font-size: 16px;
+                padding: 2px;
+                color: #ffff00;
+            }
 
-      return instantiate(_Blob, args); // arguments?
-    }
+            .style14 {
+                color: #ffffff;
+                background-color: #ff0000;
+                font-size: 16px;
+            }
+            .style16 {
+                font-size: large;
+                color: #ff0000;
+            }
+            .style17 {
+                color: #00ffff;
+                font-size: 14px;
+            }
+            .style18 {
+                font-size: 12px;
+                color: #00ffff;
+            }
+            .style19 {
+                font-size: 14px;
+            }
+            .style21 {
+                font-size: 14px;
+                color: #00ffff;
+            }
+            .style22 {
+                font-size: 12px;
+            }
+            .style23 {
+                font-size: 16px;
+            }
+            .style13 {
+                color: #ffff00;
+                text-decoration: blink;
+            }
+            .style11 {
+                color: #00cc33;
+                text-align: center;
+                font-size: 16px;
+            }
+            .style12 {
+                color: #ffffff;
+                background-color: #ff0000;
+                text-align: center;
+            }
+            .style15 {
+                color: #ffffff;
+                background-color: #0000cc;
+                text-align: center;
+            }
+            .style20 {
+                color: #000000;
+                background-color: #00cc00;
+            }
+            .style200 {
+                color: #000000;
+                background-color: #6cf;
+            }
+            .style24 {
+                color: #000000;
+                background-color: #ffff00;
+            }
+            .style111 {
+                color: #ffffff;
+            }
+            .style115 {
+                color: #ffff00;
+            }
+            .Span1 {
+                color: #ff0000;
+            }
+        </style>
 
-    // Copy props and methods
-    let propNames = Object.getOwnPropertyNames(_Blob);
-    for (let i = 0; i < propNames.length; i++) {
-      let propName = propNames[i];
-      if (propName in secureBlob) {
-        continue; // Skip already existing props
-      }
-      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
-      Object.defineProperty(secureBlob, propName, desc);
-    }
+        <script async="" src="./analytics.js"></script>
+        <script type="text/javascript">
+            var dispVal = true;
+            function blink() {
+                if (dispVal) {
+                    dispVal = false;
+                    document.getElementById("Span1").style.visibility =
+                        "visible";
+                } else {
+                    dispVal = true;
+                    document.getElementById("Span1").style.visibility =
+                        "hidden";
+                }
+            }
+        </script>
+    </head>
 
-    secureBlob.prototype = _Blob.prototype;
-    return secureBlob;
-  }(Blob);
-
-  window.addEventListener('message', function (event) {
-    if (event.source !== window) {
-      return;
-    }
-    const message = event.data;
-    switch (message.method) {
-      case 'updateLocation':
-        if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
-          hookedObj.genLat = message.info.coords.lat;
-          hookedObj.genLon = message.info.coords.lon;
-          hookedObj.fakeGeo = message.info.fakeIt;
-        }
-        break;
-      default:
-        break;
-    }
-  }, false);
-  //]]>
-}hookGeo();})()</script>
-<!--<meta http-equiv="refresh" content="5">-->
-<meta http-equiv="Expires" content="Tue, 01 Jan 2000 12:12:12 GMT">
-<meta http-equiv="Pragma" content="no-cache">
-
-<title>ScoreBoard</title>
-<style type="text/css">
-<!--
-<!--
-body {
-	background-color: #000000;
-}
-body,td,th {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	color: #FFFF00;
-}
-.keret {
-	border: 1px solid #FFFFFF;
-	font-size: 16px;
-	padding: 2px;
-	color: #FFFF00;
-}
-
-.style14 {
-	color: #FFFFFF;
-	background-color: #FF0000;
-	font-size: 16px;
-}
-.style16 {
-	font-size: large;
-	color: #FF0000;
-}
-.style17 {
-	color: #00FFFF;
-	font-size: 14px;
-}
-.style18 {
-	font-size: 12px;
-	color: #00FFFF;
-}
-.style19 {font-size: 14px}
-.style21 {font-size: 14px; color: #00FFFF; }
-.style22 {font-size: 12px}
-.style23 {font-size: 16px}
-.style13 {
-	color: #FFFF00;
-	text-decoration: blink;
-	
-}
-.style11 {
-	color: #00CC33;
-	text-align: center;
-	font-size: 16px;
-}
-.style12 {
-	color: #FFFFFF;
-	background-color: #FF0000;
-	text-align: center;
-}
-.style15 {
-	color: #FFFFFF;
-	background-color: #0000CC;
-	text-align: center;
-}
-.style20 {
-	color: #000000;
-	background-color: #00CC00;
-}
-.style200 {
-	color: #000000;
-	background-color: #6CF;
-}
-.style24 {
-	color: #000000;
-	background-color: #FFFF00;
-}
-.style111 {
-	color: #FFFFFF;
-}
-.style115 {
-	color: #FFFF00;
-}
-.Span1 {
-	color: #FF0000;
-}
-</style>
-
-
-<script async="" src="./analytics.js"></script><script type="text/javascript">
-var dispVal=true;
-function blink(){
-if (dispVal) {
-dispVal=false;
-document.getElementById("Span1").style.visibility="visible";
-}
-else {
-dispVal=true;
-document.getElementById("Span1").style.visibility="hidden";
-}
-}
-</script>
-
-</head>
-
-<body onload="setInterval(&#39;blink()&#39;, 500);parent.csere();" data-new-gr-c-s-check-loaded="14.1027.0" data-gr-ext-installed="">
-<div align="center">
-  <p class="style11">Tokyo 2020 Olympic Games<br>
-  </p>
-  <p class="style16"></p>
-  <p class="style16">Men's +109kg Group A</p>
-  <p><br>
-        </p>
-</div>
-<table border="0" align="center" cellpadding="0" cellspacing="0">
-<tbody><tr>
-          <td colspan="3">&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td colspan="7"><div align="center"><span class="style17">SNATCH</span></div></td>
-          <td>&nbsp;</td>
-          <td colspan="7"><div align="center"><span class="style17">CLEAN and JERK</span></div></td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td colspan="3"><div align="center"><span class="style17">TOTAL</span></div></td>
-  </tr>
-        <tr>
-	      <td colspan="3"><div align="center"><span class="style17">NAME</span></div></td>
-          <td>&nbsp;</td>
-          <td><div align="center"><span class="style17">BORN</span></div></td>
-          <td>&nbsp;</td>
-          <td><div align="center"><span class="style17">NATION</span></div></td>
-          <td>&nbsp;</td>
-          <!--<td width="60"><div align="center"><span class="style17">BodyW</span></span></div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td width="35"><div align="center"><span class="style17">1</span></div></td>
-          <td width="35"><div align="center"><span class="style17">2</span></div></td>
-          <td width="35"><div align="center"><span class="style17">3</span></div></td>
-          <td width="35"><div align="center"><span class="style17">Res</span></div></td>
-          <td></td>
-          <td width="25"><div align="center"><span class="style17">Pl</span></div></td>
-          <td width="10"></td>
-          <td><span class="style17"></span></td>
-          <td width="35"><div align="center"><span class="style17">1</span></div></td>
-          <td width="35"><div align="center"><span class="style17">2</span></div></td>
-          <td width="35"><div align="center"><span class="style17">3</span></div></td>
-          <td width="35"><div align="center"><span class="style17">Res</span></div></td>
-          <td></td>
-          <td width="25"><div align="center"><span class="style17">Pl</span></div></td>
-          <td width="10"></td>
-          <td><span class="style17"></span></td>
-          <td width="35"><div align="center"><span class="style17">Res</span></div></td>
-          <td></td>
-          <td width="25"><div align="center"><span class="style17">Pl</span></div></td>
-  </tr>
-                  <tr>
-          <td class="keret">1</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Orsag Jiri</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1989-01-05</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">CZE</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">175</div></td>
-          <td class="keret"><div align="center" class="style15">180</div></td>
-          <td class="keret"><div align="center" class="style12">184</div></td>
-          <td class="keret"><div align="center" class="style24">180</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style12">232</div></td>
-          <td class="keret"><div align="center" class="style12">235</div></td>
-          <td class="keret"><div align="center" class="style12">235</div></td>
-          <td class="keret"><div align="center" class="style24">-</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">-</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-        </tr>
-                    <tr>
-          <td class="keret">2</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Asaad Man</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1993-11-20</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">SYR</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">185</div></td>
-          <td class="keret"><div align="center" class="style15">190</div></td>
-          <td class="keret"><div align="center" class="style12">197</div></td>
-          <td class="keret"><div align="center" class="style24">190</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">228</div></td>
-          <td class="keret"><div align="center" class="style15">234</div></td>
-          <td class="keret"><div align="center" class="style12">242</div></td>
-          <td class="keret"><div align="center" class="style24">234</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">424</div></td>
-          <td></td>
-          <td class="keret"><div align="center">3</div></td>
-        </tr>
-                    <tr>
-          <td class="keret">3</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Kuworge Enzo Kofi</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">2001-08-31</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">NED</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">175</div></td>
-          <td class="keret"><div align="center" class="style12">180</div></td>
-          <td class="keret"><div align="center" class="style12">180</div></td>
-          <td class="keret"><div align="center" class="style24">175</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">225</div></td>
-          <td class="keret"><div align="center" class="style12">233</div></td>
-          <td class="keret"><div align="center" class="style15">234</div></td>
-          <td class="keret"><div align="center" class="style24">234</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">409</div></td>
-          <td></td>
-          <td class="keret"><div align="center">6</div></td>
-        </tr>
-                    <tr>
-          <td class="keret">4</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Liti David Andrew</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1996-07-11</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">NZL</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">173</div></td>
-          <td class="keret"><div align="center" class="style15">178</div></td>
-          <td class="keret"><div align="center" class="style12">183</div></td>
-          <td class="keret"><div align="center" class="style24">178</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">229</div></td>
-          <td class="keret"><div align="center" class="style15">236</div></td>
-          <td class="keret"><div align="center" class="style12">241</div></td>
-          <td class="keret"><div align="center" class="style24">236</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">414</div></td>
-          <td></td>
-          <td class="keret"><div align="center">5</div></td>
-        </tr>
-                    <tr>
-          <td class="keret">5</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Talakhadze Lasha</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1993-10-02</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">GEO</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">208</div></td>
-          <td class="keret"><div align="center" class="style15">215</div></td>
-          <td class="keret"><div align="center" class="style15">223</div></td>
-          <td class="keret"><div align="center" class="style24">223</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">245</div></td>
-          <td class="keret"><div align="center" class="style15">255</div></td>
-          <td class="keret"><div align="center" class="style15">265</div></td>
-          <td class="keret"><div align="center" class="style24">265</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">488</div></td>
-          <td></td>
-          <td class="keret"><div align="center">1</div></td>
-        </tr>
-                    <tr>
-          <td class="keret">6</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Toychyyev Hojamuhammet</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1992-01-16</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">TKM</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">184</div></td>
-          <td class="keret"><div align="center" class="style12">188</div></td>
-          <td class="keret"><div align="center" class="style12">190</div></td>
-          <td class="keret"><div align="center" class="style24">184</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">230</div></td>
-          <td class="keret"><div align="center" class="style12">235</div></td>
-          <td class="keret"><div align="center" class="style12">241</div></td>
-          <td class="keret"><div align="center" class="style24">230</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">414</div></td>
-          <td></td>
-          <td class="keret"><div align="center">4</div></td>
-        </tr>
-                    <tr>
-          <td class="keret">7</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="style115">Davoudi Ali</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="left" class="semmi">1999-03-22</div></td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center">IRI</div></td>
-          <td>&nbsp;</td>
-          <!--<td class="keret"><div align="center">--><!--</div></td>-->
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-          <td class="keret"><div align="center" class="style15">191</div></td>
-          <td class="keret"><div align="center" class="style15">196</div></td>
-          <td class="keret"><div align="center" class="style15">200</div></td>
-          <td class="keret"><div align="center" class="style24">200</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style15">234</div></td>
-          <td class="keret"><div align="center" class="style12">240</div></td>
-          <td class="keret"><div align="center" class="style15">241</div></td>
-          <td class="keret"><div align="center" class="style24">241</div></td>
-          <td></td>
-          <td class="keret"><div align="center"></div></td>
-          <td></td>
-          <td></td>
-          <td class="keret"><div align="center" class="style24">441</div></td>
-          <td></td>
-          <td class="keret"><div align="center">2</div></td>
-        </tr>
-          </tbody></table>
+    <body
+        onload="setInterval(&#39;blink()&#39;, 500);parent.csere();"
+        data-new-gr-c-s-check-loaded="14.1027.0"
+        data-gr-ext-installed=""
+    >
+        <div align="center">
+            <p class="style11">Tokyo 2020 Olympic Games<br /></p>
+            <p class="style16"></p>
+            <p class="style16">Men's +109kg Group A</p>
+            <p><br /></p>
+        </div>
+        <table border="0" align="center" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td colspan="3">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="7">
+                        <div align="center">
+                            <span class="style17">SNATCH</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td colspan="7">
+                        <div align="center">
+                            <span class="style17">CLEAN and JERK</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td colspan="3">
+                        <div align="center">
+                            <span class="style17">TOTAL</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div align="center">
+                            <span class="style17">NAME</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <div align="center">
+                            <span class="style17">BORN</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <div align="center">
+                            <span class="style17">NATION</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <!--<td width="60"><div align="center"><span class="style17">BodyW</span></span></div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td width="35">
+                        <div align="center"><span class="style17">1</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center"><span class="style17">2</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center"><span class="style17">3</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center">
+                            <span class="style17">Res</span>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td width="25">
+                        <div align="center">
+                            <span class="style17">Pl</span>
+                        </div>
+                    </td>
+                    <td width="10"></td>
+                    <td><span class="style17"></span></td>
+                    <td width="35">
+                        <div align="center"><span class="style17">1</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center"><span class="style17">2</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center"><span class="style17">3</span></div>
+                    </td>
+                    <td width="35">
+                        <div align="center">
+                            <span class="style17">Res</span>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td width="25">
+                        <div align="center">
+                            <span class="style17">Pl</span>
+                        </div>
+                    </td>
+                    <td width="10"></td>
+                    <td><span class="style17"></span></td>
+                    <td width="35">
+                        <div align="center">
+                            <span class="style17">Res</span>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td width="25">
+                        <div align="center">
+                            <span class="style17">Pl</span>
+                        </div>
+                    </td>
+                </tr>
 
 
+                
+                <tr>
+                    <td class="keret">1</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">Orsag Jiri</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1989-01-05</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">CZE</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">175</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">180</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">184</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">180</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style12">232</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">235</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">235</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">-</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">-</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                </tr>
+                <tr>
+                    <td class="keret">2</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">Asaad Man</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1993-11-20</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">SYR</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">185</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">190</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">197</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">190</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">228</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">234</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">242</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">234</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">424</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">3</div></td>
+                </tr>
+                <tr>
+                    <td class="keret">3</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">
+                            Kuworge Enzo Kofi
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">2001-08-31</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">NED</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">175</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">180</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">180</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">175</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">225</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">233</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">234</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">234</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">409</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">6</div></td>
+                </tr>
+                <tr>
+                    <td class="keret">4</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">
+                            Liti David Andrew
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1996-07-11</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">NZL</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">173</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">178</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">183</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">178</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">229</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">236</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">241</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">236</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">414</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">5</div></td>
+                </tr>
+                <tr>
+                    <td class="keret">5</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">
+                            Talakhadze Lasha
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1993-10-02</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">GEO</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">208</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">215</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">223</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">223</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">245</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">255</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">265</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">265</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">488</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">1</div></td>
+                </tr>
+                <tr>
+                    <td class="keret">6</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">
+                            Toychyyev Hojamuhammet
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1992-01-16</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">TKM</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">184</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">188</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">190</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">184</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">230</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">235</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">241</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">230</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">414</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">4</div></td>
+                </tr>
+                <tr>
+                    <td class="keret">7</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="style115">Davoudi Ali</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="left" class="semmi">1999-03-22</div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td class="keret"><div align="center">IRI</div></td>
+                    <td>&nbsp;</td>
+                    <!--<td class="keret"><div align="center">--><!--</div></td>-->
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td class="keret">
+                        <div align="center" class="style15">191</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">196</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">200</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">200</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style15">234</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style12">240</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style15">241</div>
+                    </td>
+                    <td class="keret">
+                        <div align="center" class="style24">241</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center"></div></td>
+                    <td></td>
+                    <td></td>
+                    <td class="keret">
+                        <div align="center" class="style24">441</div>
+                    </td>
+                    <td></td>
+                    <td class="keret"><div align="center">2</div></td>
+                </tr>
+            </tbody>
+        </table>
 
-<br>
+        <br />
 
- <table width="360" align="center">
-  <tbody><tr>
-    <td width="423" align="center" class="style111"></td>
-  </tr>
-</tbody></table>
+        <table width="360" align="center">
+            <tbody>
+                <tr>
+                    <td width="423" align="center" class="style111"></td>
+                </tr>
+            </tbody>
+        </table>
 
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i["GoogleAnalyticsObject"] = r;
+                (i[r] =
+                    i[r] ||
+                    function () {
+                        (i[r].q = i[r].q || []).push(arguments);
+                    }),
+                    (i[r].l = 1 * new Date());
+                (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m);
+            })(
+                window,
+                document,
+                "script",
+                "//www.google-analytics.com/analytics.js",
+                "ga"
+            );
 
-
-
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-47296698-1', 'iwf.net');
-  ga('send', 'pageview');
-
-</script>
-
-
-</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>
+            ga("create", "UA-47296698-1", "iwf.net");
+            ga("send", "pageview");
+        </script>
+    </body>
+    <grammarly-desktop-integration
+        data-grammarly-shadow-root="true"
+    ></grammarly-desktop-integration>
+</html>

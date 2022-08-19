@@ -1,12 +1,12 @@
-// import TableMainControls from "./TableMainControls"
+import TableMainControls from "./TableMainControls"
 
-// const TableControlsContainer = () => {
-//     return (
-//         <div>
-//             <TableMainControls />
-//         </div>
-//     )
-// }
+const TableControlsContainer = () => {
+    return (
+        <div>
+            <TableMainControls />
+        </div>
+    )
+}
 
-// export default TableControlsContainer;
+export default TableControlsContainer;
 

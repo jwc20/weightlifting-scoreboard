@@ -3,6 +3,8 @@
 To keep the original styling of EasyWL IWF Scoreboard, I need to render raw html file since many tag elements are outdated (Example: colspan, align).
 Rendering and injecting jsx to html is not allowed in React so I need to either not use React or [practice some dark magic](https://vhudyma-blog.eu/render-raw-html-in-react/).
 
+![ScoreboardControls](https://user-images.githubusercontent.com/99288419/185715082-5ab3d94f-944c-4364-95ad-5335d4175ea3.png)
+
 
 An app for keeping weightlifting scores.\
 [Figma Wireframe](https://www.figma.com/file/i2E4v69yYlq6BQxmIiDuL7/wl?node-id=0%3A1)
